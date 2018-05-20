@@ -1,45 +1,105 @@
+import { database } from '../firebase'
+
 // Actions types
+const GET_TASKS = 'todos/GET_TASKS'
 const ADD_TASK = 'todos/ADD_TASK'
-const DELETE_TASK = 'todos/DELETE_TASK'
-const NEW_TASK_CHANGE = 'todos/NEW_TASK_CHANGE'
+const NEW_HEADER_CHANGE = 'todos/NEW_HEADER_CHANGE'
+const NEW_DESC_CHANGE = 'todos/NEW_DESC_CHANGE'
 
 // Actions creators
 // This are functions that call for each Action
-export const addTask = () => ({ type: ADD_TASK })
-export const delTask = (index) => ({ type: DELETE_TASK, index })
-export const newTaskChangeHandler = (newText) => ({ type: NEW_TASK_CHANGE, newText })
+const getTasks = (tasks) => ({ type: GET_TASKS, tasks })
+
+export const initTasksSync = () => (dispatch, getState) => {
+  const userUid = getState().auth.user.uid
+  database.ref(`/users/${userUid}/tasks`)
+    .on('value', (snapshot) => {
+      const tasks =
+        (Object.entries(snapshot.val() || {})
+          .map(([key, value]) => (
+            { ...value, key }
+          ))
+        )
+      dispatch(getTasks(tasks))
+    })
+}
+
+const addTask = () => ({ type: ADD_TASK })
+// const delTask = () => ({ type: DELETE_TASK })
+
+export const onNewHeaderChange = (value) => ({ type: NEW_HEADER_CHANGE, value })
+export const onNewDescChange = (value) => ({ type: NEW_DESC_CHANGE, value })
+
+export const addTaskToFirebase = () => (dispatch, getState) => {
+  if (getState().todos.newTaskHeader && getState().todos.newTaskDescription) {
+    const userUid = getState().auth.user.uid
+    const newTaskKey = database.ref(`/users/${userUid}/tasks`).push().key
+    const newTask = {
+      header: getState().todos.newTaskHeader,
+      description: getState().todos.newTaskDescription,
+      status: 'to-do'
+    }
+    database.ref(`/users/${userUid}/tasks/${newTaskKey}`)
+      .set(newTask)
+      .then(() => dispatch(addTask()))
+  } else { }
+}
+
+export const deleteTaskFromFirebase = (key) => (dispatch, getState) => {
+  const userUid = getState().auth.user.uid
+  database.ref(`/users/${userUid}/tasks/${key}`)
+    .remove()
+    // .then(() => dispatch(delTask()))
+}
+
+export const toggleToDo = (task) => (dispatch, getState) => {
+  const userUid = getState().auth.user.uid
+  database.ref(`/users/${userUid}/tasks/${task.key}/status`)
+    .set('to-do')
+}
+export const toggleInProgress = (task) => (dispatch, getState) => {
+  const userUid = getState().auth.user.uid
+  database.ref(`/users/${userUid}/tasks/${task.key}/status`)
+    .set('in-progress')
+}
+export const toggleCompleted = (task) => (dispatch, getState) => {
+  const userUid = getState().auth.user.uid
+  database.ref(`/users/${userUid}/tasks/${task.key}/status`)
+    .set('completed')
+}
 
 // Initial state - state is empty by default
 const initialState = {
   tasks: [],
-  newTaskText: ''
+  newTaskHeader: '',
+  newTaskDescription: ''
 }
 
 export default (state = initialState, action) => {
   switch (action.type) {
-    case ADD_TASK:
-      return state.newTaskText ?
+    case GET_TASKS:
+      return action.tasks.length ?
         {
           ...state,
-          tasks: state.tasks.concat({
-            task: state.newTaskText,
-            completed: false
-          }),
-          newTaskText: ''
+          tasks: action.tasks
         }
         :
         state
-    case DELETE_TASK:
+    case ADD_TASK:
+      return {
+          ...state,
+          newTaskHeader: '',
+          newTaskDescription: ''
+        }
+    case NEW_HEADER_CHANGE:
       return {
         ...state,
-        tasks: state.tasks.filter((task, index) =>
-          index !== action.index
-        )
+        newTaskHeader: action.value
       }
-    case NEW_TASK_CHANGE:
+    case NEW_DESC_CHANGE:
       return {
         ...state,
-        newTaskText: action.newText
+        newTaskDescription: action.value
       }
     default:
       return state
