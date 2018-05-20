@@ -4,7 +4,6 @@ import { connect } from 'react-redux'
 // Material-ui
 import PaperRefined from '../UI/PaperRefined'
 import { TextField, RaisedButton } from 'material-ui'
-import Power from 'material-ui/svg-icons/action/power-settings-new'
 // Reducer
 import { addTaskToFirebase, onNewHeaderChange, onNewDescChange } from '../../state/todos'
 

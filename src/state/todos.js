@@ -3,7 +3,6 @@ import { database } from '../firebase'
 // Actions types
 const GET_TASKS = 'todos/GET_TASKS'
 const ADD_TASK = 'todos/ADD_TASK'
-const DELETE_TASK = 'todos/DELETE_TASK'
 const NEW_HEADER_CHANGE = 'todos/NEW_HEADER_CHANGE'
 const NEW_DESC_CHANGE = 'todos/NEW_DESC_CHANGE'
 
@@ -26,7 +25,7 @@ export const initTasksSync = () => (dispatch, getState) => {
 }
 
 const addTask = () => ({ type: ADD_TASK })
-const delTask = () => ({ type: DELETE_TASK })
+// const delTask = () => ({ type: DELETE_TASK })
 
 export const onNewHeaderChange = (value) => ({ type: NEW_HEADER_CHANGE, value })
 export const onNewDescChange = (value) => ({ type: NEW_DESC_CHANGE, value })
@@ -37,19 +36,36 @@ export const addTaskToFirebase = () => (dispatch, getState) => {
     const newTaskKey = database.ref(`/users/${userUid}/tasks`).push().key
     const newTask = {
       header: getState().todos.newTaskHeader,
-      description: getState().todos.newTaskDescription
+      description: getState().todos.newTaskDescription,
+      status: 'to-do'
     }
-    database.ref(`/users/${userUid}/tasks`)
-      .push(newTask)
+    database.ref(`/users/${userUid}/tasks/${newTaskKey}`)
+      .set(newTask)
       .then(() => dispatch(addTask()))
-  } else {}
+  } else { }
 }
 
 export const deleteTaskFromFirebase = (key) => (dispatch, getState) => {
   const userUid = getState().auth.user.uid
   database.ref(`/users/${userUid}/tasks/${key}`)
     .remove()
-    .then(() => dispatch(delTask()))
+    // .then(() => dispatch(delTask()))
+}
+
+export const toggleToDo = (task) => (dispatch, getState) => {
+  const userUid = getState().auth.user.uid
+  database.ref(`/users/${userUid}/tasks/${task.key}/status`)
+    .set('to-do')
+}
+export const toggleInProgress = (task) => (dispatch, getState) => {
+  const userUid = getState().auth.user.uid
+  database.ref(`/users/${userUid}/tasks/${task.key}/status`)
+    .set('in-progress')
+}
+export const toggleCompleted = (task) => (dispatch, getState) => {
+  const userUid = getState().auth.user.uid
+  database.ref(`/users/${userUid}/tasks/${task.key}/status`)
+    .set('completed')
 }
 
 // Initial state - state is empty by default
@@ -70,22 +86,11 @@ export default (state = initialState, action) => {
         :
         state
     case ADD_TASK:
-      return state.newTaskHeader && state.newTaskDescription ?
-        {
+      return {
           ...state,
           newTaskHeader: '',
           newTaskDescription: ''
-
         }
-        :
-        state
-    case DELETE_TASK:
-      return {
-        ...state,
-        tasks: state.tasks.filter((task, index) =>
-          task.key !== action.key
-        )
-      }
     case NEW_HEADER_CHANGE:
       return {
         ...state,

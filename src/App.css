@@ -24,3 +24,12 @@
   display: inline-block;
   margin: 0;
 }
+
+.buttons-wrapper {
+  display: flex;
+  justify-content: center;
+}
+
+.buttons-wrapper>button {
+  margin: 0 0.5rem;
+}

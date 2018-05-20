@@ -2,13 +2,13 @@ import React from 'react'
 // React-Redux
 import { connect } from 'react-redux'
 // Reducer
-import { deleteTaskFromFirebase } from '../../state/todos'
+import { deleteTaskFromFirebase, toggleToDo, toggleInProgress, toggleCompleted } from '../../state/todos'
 // Components
 import AddTask from './AddTask'
 // Material-ui
 import PaperRefined from '../UI/PaperRefined'
-import { TextField, RaisedButton, IconButton } from 'material-ui'
-import Power from 'material-ui/svg-icons/action/power-settings-new'
+import { RaisedButton } from 'material-ui'
+import Buttons from './Buttons';
 
 const ToDo = (props) => (
   <div>
@@ -20,7 +20,12 @@ const ToDo = (props) => (
             <PaperRefined key={task.key}>
               <div className={'task-wrapper'}>
                 <h2 className={'task-title'}>
-                  {task.header}
+                  {
+                    task.status === 'completed' ?
+                      <strike>{task.header}</strike>
+                      :
+                      task.header
+                  }
                 </h2>
                 <RaisedButton
                   secondary={true}
@@ -31,9 +36,15 @@ const ToDo = (props) => (
               <hr />
               <div>
                 <p>
-                  {task.description}
+                  {
+                    task.status === 'completed' ?
+                      <strike>{task.description}</strike>
+                      :
+                      task.description
+                  }
                 </p>
               </div>
+              <Buttons task={task} />
             </PaperRefined>
           ))
           :
@@ -50,6 +61,9 @@ export default connect(
     tasks: state.todos.tasks
   }),
   dispatch => ({
-    onTaskDelete: (key) => dispatch(deleteTaskFromFirebase(key))
+    onTaskDelete: (key) => dispatch(deleteTaskFromFirebase(key)),
+    toggleToDo: (task) => dispatch(toggleToDo(task)),
+    toggleInProgress: (task) => dispatch(toggleInProgress(task)),
+    toggleCompleted: (task) => dispatch(toggleCompleted(task))
   })
 )(ToDo)
