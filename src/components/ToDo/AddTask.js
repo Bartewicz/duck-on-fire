@@ -20,7 +20,7 @@ const AddTask = (props) => (
       />
     </div>
     <hr />
-    <div className={'task-wrapper'}>
+    <div className={'add-task-wrapper'}>
       <div>
         <span>Description:&nbsp;</span>
         <br />
