@@ -1,6 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { logOut } from '../state/auth'
+import logo from '../logo.gif'
 import IconButton from 'material-ui/IconButton'
 import Power from 'material-ui/svg-icons/action/power-settings-new'
 
@@ -12,16 +13,18 @@ const styles = {
   },
   medium: {
     width: 72,
-    height: 72,
-    padding: 12
+    height: 72
   }
 }
 
 const AppBar = (props) => (
   <div className={'appbar'}>
-    <span className={'brand'}>
-      Duck on fire
+    <div>
+      <img className={'logo'} src={logo} alt={'Logo'} />
+      <span className={'brand'}>
+        Duck on fire
       </span>
+    </div>
     {
       props.logged ?
         <IconButton
