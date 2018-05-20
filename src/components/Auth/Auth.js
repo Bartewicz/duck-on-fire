@@ -1,8 +1,9 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { logInByGoogle } from '../../state/auth'
-import LogInByGoogle from './LogInByGoogle'
+import AppBar from '../AppBar'
 import PaperRefined from '../UI/PaperRefined'
+import LogInByGoogle from './LogInByGoogle'
 
 const styles = {
   wrapper: {
@@ -26,15 +27,18 @@ export default connect(
         props.isUserLoggedIn ?
           props.children
           :
-          <div style={styles.wrapper}>
-            <PaperRefined centered>
-            <h3>welcome to</h3>
-            <h3>DUCK ON FIRE</h3>
-            <h3>ToDo List</h3>
-              <LogInByGoogle
-                onLogInClick={props.logInByGoogle}
-              />
-            </PaperRefined>
+          <div>
+            <AppBar />
+            <div style={styles.wrapper}>
+              <PaperRefined centered>
+                <h3>welcome to</h3>
+                <h3>DUCK ON FIRE</h3>
+                <h3>ToDo List</h3>
+                <LogInByGoogle
+                  onLogInClick={props.logInByGoogle}
+                />
+              </PaperRefined>
+            </div>
           </div>
       }
     </div>

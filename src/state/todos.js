@@ -14,7 +14,7 @@ const getTasks = (tasks) => ({ type: GET_TASKS, tasks })
 export const initTasksSync = () => (dispatch, getState) => {
   const userUid = getState().auth.user.uid
   database.ref(`/users/${userUid}/tasks`)
-    .once('value', (snapshot) => {
+    .on('value', (snapshot) => {
       const tasks =
         (Object.entries(snapshot.val() || {})
           .map(([key, value]) => (
@@ -24,29 +24,32 @@ export const initTasksSync = () => (dispatch, getState) => {
       dispatch(getTasks(tasks))
     })
 }
-const addTask = (key) => ({ type: ADD_TASK, key })
-const delTask = (key) => ({ type: DELETE_TASK, key })
+
+const addTask = () => ({ type: ADD_TASK })
+const delTask = () => ({ type: DELETE_TASK })
 
 export const onNewHeaderChange = (value) => ({ type: NEW_HEADER_CHANGE, value })
 export const onNewDescChange = (value) => ({ type: NEW_DESC_CHANGE, value })
 
 export const addTaskToFirebase = () => (dispatch, getState) => {
-  const userUid = getState().auth.user.uid
-  const newTaskKey = database.ref(`/users/${userUid}/tasks`).push().key
-  const newTask = {
-    header: getState().todos.newTaskHeader,
-    description: getState().todos.newTaskDescription
-  }
-  database.ref(`/users/${userUid}/tasks`)
-    .push(newTask)
-    .then(() => dispatch(addTask(newTaskKey)))
+  if (getState().todos.newTaskHeader && getState().todos.newTaskDescription) {
+    const userUid = getState().auth.user.uid
+    const newTaskKey = database.ref(`/users/${userUid}/tasks`).push().key
+    const newTask = {
+      header: getState().todos.newTaskHeader,
+      description: getState().todos.newTaskDescription
+    }
+    database.ref(`/users/${userUid}/tasks`)
+      .push(newTask)
+      .then(() => dispatch(addTask()))
+  } else {}
 }
 
 export const deleteTaskFromFirebase = (key) => (dispatch, getState) => {
   const userUid = getState().auth.user.uid
   database.ref(`/users/${userUid}/tasks/${key}`)
     .remove()
-    .then(() => dispatch(delTask(key)))
+    .then(() => dispatch(delTask()))
 }
 
 // Initial state - state is empty by default
@@ -60,21 +63,16 @@ export default (state = initialState, action) => {
   switch (action.type) {
     case GET_TASKS:
       return action.tasks.length ?
-      {
-        ...state,
-        tasks: action.tasks
-      }
-      :
-      state
+        {
+          ...state,
+          tasks: action.tasks
+        }
+        :
+        state
     case ADD_TASK:
       return state.newTaskHeader && state.newTaskDescription ?
         {
           ...state,
-          tasks: state.tasks.concat({
-            key: action.key,
-            header: state.newTaskHeader,
-            description: state.newTaskDescription
-          }),
           newTaskHeader: '',
           newTaskDescription: ''
 

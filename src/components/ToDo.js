@@ -2,35 +2,28 @@ import React from 'react'
 // React-Redux
 import { connect } from 'react-redux'
 // Material-ui
-import { RaisedButton } from 'material-ui'
 import PaperRefined from './UI/PaperRefined'
-import { TextField } from 'material-ui'
+import { TextField, RaisedButton, IconButton } from 'material-ui'
+import Power from 'material-ui/svg-icons/action/power-settings-new'
 // Reducer
 import { addTaskToFirebase, deleteTaskFromFirebase, onNewHeaderChange, onNewDescChange } from '../state/todos'
 
 const ToDo = (props) => (
   <div>
     <PaperRefined className={'add-task-wrapper'}>
-      <div className={'add-task-header'}>
-        <div>
-          <span>Header:&nbsp;</span>
-          <TextField
-            name={'new-task'}
-            hintText={'Type header for your task'}
-            onChange={props.onNewHeaderChange}
-            value={props.newTaskHeader}
-          />
-        </div>
-        <div>
-          <RaisedButton
-            primary={true}
-            label={'Add task'}
-            onClick={props.onTaskAdd}
-          />
-        </div>
+      <div className={'task-title'}>
+        <span>Header:&nbsp;</span>
+        <br />
+        <TextField
+          name={'new-task'}
+          hintText={'Type header for your task'}
+          onChange={props.onNewHeaderChange}
+          value={props.newTaskHeader}
+        />
       </div>
       <hr />
       <span>Description:&nbsp;</span>
+      <br />
       <TextField
         onChange={props.onNewDescChange}
         value={props.newTaskDescription}
@@ -38,29 +31,34 @@ const ToDo = (props) => (
         hintText={'Type task description'}
         multiLine={true}
       />
+      <RaisedButton
+        primary={true}
+        label={<b>Add</b>}
+        onClick={props.onTaskAdd}
+      />
     </PaperRefined>
 
-    <ul>
+    <section>
       {
         props.tasks.length ?
           props.tasks.map((task) => (
             <PaperRefined key={task.key}>
-              <li>
-                <div>
-                  <h2>
-                    {task.header}
-                  </h2>
-                  <hr />
-                  <p>
-                    {task.description}
-                  </p>
-                </div>
+              <div className={'task-header'}>
+                <h2 className={'task-title'}>
+                  {task.header}
+                </h2>
                 <RaisedButton
                   secondary={true}
-                  label={'Delete task'}
+                  label={<b>Delete</b>}
                   onClick={() => props.onTaskDelete(task.key)}
                 />
-              </li>
+              </div>
+              <hr />
+              <div className={'task-body'}>
+                <p>
+                  {task.description}
+                </p>
+              </div>
             </PaperRefined>
           ))
           :
@@ -68,7 +66,7 @@ const ToDo = (props) => (
             <h2>No tasks yet. Add some tasks to feed your duck.</h2>
           </PaperRefined>
       }
-    </ul>
+    </section>
   </div>
 )
 

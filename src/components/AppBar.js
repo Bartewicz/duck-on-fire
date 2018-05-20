@@ -5,20 +5,6 @@ import IconButton from 'material-ui/IconButton'
 import Power from 'material-ui/svg-icons/action/power-settings-new'
 
 const styles = {
-  appbar: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    itemsAlign: 'center',
-    width: '100vw',
-    boxSizing: 'border-box',
-    background: '#808080',
-    padding: 12
-  },
-  brand: {
-    fontSize: '48px',
-    color: 'white',
-    padding: '12px'
-  },
   mediumIcon: {
     color: 'white',
     width: 48,
@@ -38,17 +24,22 @@ export default connect(
   })
 )(
   (props) => (
-    <div style={styles.appbar}>
-      <span style={styles.brand}>
+    <div className={'appbar'}>
+      <span className={'brand'}>
         Duck on fire
       </span>
-      <IconButton
-        iconStyle={styles.mediumIcon}
-        style={styles.medium}
-        onClick={props.logOut}
-      >
-        <Power />
-      </IconButton>
+        {
+          props.logged ?
+          <IconButton
+            onClick={props.logOut}
+            iconStyle={styles.mediumIcon}
+            style={styles.medium}
+          >
+            <Power />
+          </IconButton>
+          :
+          null
+      }
     </div>
   )
 )

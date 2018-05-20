@@ -1,0 +1,26 @@
+.appbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100vw;
+  box-sizing: border-box;
+  background: #808080;
+  padding: 12;
+}
+
+.brand {
+  font-size: 48px;
+  color: white;
+  padding: 12px;
+}
+
+.task-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.task-title {
+  display: inline-block;
+  margin: 0;
+}

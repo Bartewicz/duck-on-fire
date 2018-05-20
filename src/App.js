@@ -5,13 +5,14 @@ import { initTasksSync } from './state/todos'
 // Components
 import AppBar from './components/AppBar'
 import ToDo from './components/ToDo'
+import './App.css'
 
 class App extends React.Component {
 
   render() {
     return (
       <div>
-        <AppBar />
+        <AppBar logged />
           <ToDo />
       </div>
     )
