@@ -13,6 +13,29 @@ const styles = {
   }
 }
 
+const Auth = (props) => (
+  <div>
+    {
+      props.isUserLoggedIn ?
+        props.children
+        :
+        <div>
+          <AppBar />
+          <div style={styles.wrapper}>
+            <PaperRefined centered>
+              <h3>welcome to</h3>
+              <h3>DUCK ON FIRE</h3>
+              <h3>ToDo List</h3>
+              <LogInByGoogle
+                onLogInClick={props.logInByGoogle}
+              />
+            </PaperRefined>
+          </div>
+        </div>
+    }
+  </div>
+)
+
 export default connect(
   state => ({
     isUserLoggedIn: state.auth.isLoggedIn
@@ -20,27 +43,4 @@ export default connect(
   dispatch => ({
     logInByGoogle: () => dispatch(logInByGoogle()),
   })
-)(
-  (props) => (
-    <div>
-      {
-        props.isUserLoggedIn ?
-          props.children
-          :
-          <div>
-            <AppBar />
-            <div style={styles.wrapper}>
-              <PaperRefined centered>
-                <h3>welcome to</h3>
-                <h3>DUCK ON FIRE</h3>
-                <h3>ToDo List</h3>
-                <LogInByGoogle
-                  onLogInClick={props.logInByGoogle}
-                />
-              </PaperRefined>
-            </div>
-          </div>
-      }
-    </div>
-  )
-)
+)(Auth)

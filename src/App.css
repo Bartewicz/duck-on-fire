@@ -14,7 +14,7 @@
   padding: 12px;
 }
 
-.task-header {
+.task-wrapper {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
