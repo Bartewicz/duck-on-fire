@@ -7,26 +7,17 @@ import AppBar from './components/AppBar'
 import ToDo from './components/ToDo'
 import './App.css'
 
-class App extends React.Component {
-
-  render() {
-    return (
-      <div>
-        <AppBar logged />
-          <ToDo />
-      </div>
-    )
-  }
-}
-
-const mapStateToProps = state => ({})
-
-const mapDispatchToProps = dispatch => {
-  dispatch(initTasksSync())
-  return {}
-}
+const App = () => (
+  <div>
+    <AppBar logged />
+    <ToDo />
+  </div>
+)
 
 export default connect(
-  mapStateToProps,
-  mapDispatchToProps
+  state => ({}),
+  dispatch => {
+    dispatch(initTasksSync())
+    return {}
+  }
 )(App)
